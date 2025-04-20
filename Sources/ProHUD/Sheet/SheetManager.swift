@@ -48,7 +48,6 @@ extension SheetTarget {
         navEvents[.onViewWillDisappear]?(self)
         window.sheet.translateOut { [weak window, weak self] in
             guard let self = self, let win = window else { return }
-            win.sheet.navEvents[.onViewDidDisappear]?(win.sheet)
             if windows.count > 1 {
                 windows.removeAll { $0 == win }
             } else if windows.count == 1 {
@@ -57,6 +56,7 @@ extension SheetTarget {
                 consolePrint("‼️代码漏洞：已经没有sheet了")
             }
             self.setContextWindows(windows)
+            win.sheet.navEvents[.onViewDidDisappear]?(win.sheet)
         }
     }
     

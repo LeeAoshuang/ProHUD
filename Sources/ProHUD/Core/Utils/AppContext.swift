@@ -70,7 +70,18 @@ public struct AppContext {
 extension AppContext {
     
     static var foregroundActiveWindowScenes: [UIWindowScene] {
-        return UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).filter({ $0.activationState == .foregroundActive })
+        return UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).filter({ scene in
+            if #available(iOS 16.0, *) {
+                if scene.activationState == .foregroundActive && scene.session.role != .windowExternalDisplayNonInteractive {
+                    return true
+                }
+            } else {
+                if scene.activationState == .foregroundActive && scene.session.role != .windowExternalDisplay {
+                    return true
+                }
+            }
+            return false
+        })
     }
     
     /// 如果设置了workspace，就是workspace所对应的windowScene，否则就是最后一个打开的应用程序窗口的windowScene
